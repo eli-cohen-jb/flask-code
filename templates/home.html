@@ -1,0 +1,49 @@
+<h1>home</h1>
+<h2>home21</h3>
+
+
+<input type="text" id="userid" placeholder="user"/>
+<input type="text" id="pass" placeholder="pass"/>
+<input type="button" value="get data" onclick="getbybutton()"/>
+<script>
+
+    function getToken(data, func){
+        var http = new XMLHttpRequest();
+
+        http.open('post', 'http://127.0.0.1:5010/auth', true)
+        http.onreadystatechange = function() {
+            if(this.readyState == 4 && this.status == 200){
+                let at = (JSON.parse(http.responseText).access_token)
+                func(at)
+
+            }
+        }
+        http.setRequestHeader("Content-type", "application/json")
+        http.send(JSON.stringify(data))
+    }
+    function getProducts(at){
+        var http = new XMLHttpRequest();
+
+        http.open('post', 'http://127.0.0.1:5010/products', true)
+        http.onreadystatechange = function() {
+            if(this.readyState == 4 && this.status == 200){
+                data = http.responseText
+                console.log(data)
+            }
+        }
+        http.setRequestHeader("Authorization", "JWT " + at)
+        http.send(null)
+    }
+
+    function getbybutton(){
+        let user = document.getElementById("userid").value
+        let pass = document.getElementById("pass").value
+        data ={"username": user, "password": pass}
+
+        getToken(data, getProducts)
+    }
+    
+    data ={"username": "user1", "password": "password1"}
+    getToken(data, getProducts)    
+
+</script>
